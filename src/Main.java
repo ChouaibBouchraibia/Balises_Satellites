@@ -43,13 +43,5 @@ public class Main {
 
 		space.repaint();
 
-		
-		// Exemple.
-		Entity ent = new Entity();
-		ent.setMoveCallback((location) -> {
-			return new Point(0, 0);
-		});
-		ent.move();
-
 	}
 }

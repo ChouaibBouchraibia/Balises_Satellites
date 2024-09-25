@@ -1,9 +1,25 @@
 package composants.interfaces;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 
 public interface EntityInterface {
 
+	/**
+	 * Retourne les limites.
+	 *
+	 * @return
+	 */
+	public Rectangle getLimits();
+	
+	/**
+	 * Définis les limites.
+	 *
+	 * @param limits
+	 * @return
+	 */
+	public boolean setLimits(Rectangle limits);
+	
 	/**
 	 * Retourne la position de l'entité.
 	 *
