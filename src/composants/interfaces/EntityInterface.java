@@ -1,5 +1,6 @@
 package composants.interfaces;
 
+import java.awt.Component;
 import java.awt.Point;
 
 import nicellipse.component.NiRectangle;
@@ -20,6 +21,13 @@ public interface EntityInterface {
 	 * @return
 	 */
 	public boolean setParent(NiRectangle parent);
+	
+	/**
+	 * Créé le composant qui sera ajouté au parent.
+	 *
+	 * @return
+	 */
+	public Component createComponent();
 	
 	/**
 	 * Retourne la position de l'entité.

@@ -1,7 +1,7 @@
 package composants.entities;
 
+import java.awt.Component;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +14,9 @@ public abstract class Entity implements EntityInterface {
 
 	private NiRectangle parent;
 	private Point location;
+	
+	protected Component component;
+	
 	private List<MovedListener> movedListeners;
 	private List<SyncedListener> syncedListeners;
 	
@@ -22,16 +25,24 @@ public abstract class Entity implements EntityInterface {
 		this.location = startLocation;
 		this.movedListeners = new ArrayList<MovedListener>();
 		this.syncedListeners = new ArrayList<SyncedListener>();
+
+		this.component = this.createComponent();
+		this.parent.add(this.component);
 	}
 	
+	@Override
 	public NiRectangle getParent() {
 		return this.parent;
 	}
 	
+	@Override
 	public boolean setParent(NiRectangle parent) {
 		this.parent = parent;
 		return true;
 	}
+	
+	@Override
+	public abstract Component createComponent();
 	
 	@Override
 	public Point getLocation() {

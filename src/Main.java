@@ -41,7 +41,7 @@ public class Main {
 		space.openInWindow();
 
 
-		new Balise(ocean, null);
+		new Balise(ocean, new Point(10, 10));
 		
 
 		space.repaint();
