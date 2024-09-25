@@ -18,23 +18,21 @@ public interface EntityInterface {
 	 * @return
 	 */
 	public boolean setLocation(Point location);
-	
+
+	/**
+	 * Déplace l'entité.
+	 */
 	public void move();
 	
+	/**
+	 * Synchronise l'entité.
+	 */
 	public void sync();
 	
 	/**
 	 * Effectue une petite animation.
 	 */
 	public void animate();
-
-	/**
-	 * Définis le rappel qui sera utilisé pour déplacer l'entité.
-	 *
-	 * @param callback
-	 * @return Vrai si le rappel est nouveau, faux sinon.
-	 */
-	public boolean setMoveCallback(MoveCallback callback);
 
 	/**
 	 * Ajoute un écouteur de mouvement qui sera appelé lorsque l'entité à été déplacée.
@@ -51,14 +49,6 @@ public interface EntityInterface {
 	 * @return Vrai si le rappel à été retiré, faux sinon.
 	 */
 	public boolean removeMovedListener(MovedListener listener);
-
-	/**
-	 * Définis le rappel qui sera utilisé pour synchroniser l'entité.
-	 * 
-	 * @param callback
-	 * @return Vrai si le rappel est nouveau, faux sinon.
-	 */
-	public boolean setSyncCallback(SyncCallback callback);
 
 	/**
 	 * Ajoute un écouteur de synchronisation qui sera appelé lorsque l'entité à été déplacée.
