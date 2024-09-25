@@ -4,6 +4,7 @@ import nicellipse.component.NiSpace;
 
 import javax.swing.*;
 
+import composants.entities.Balise;
 import composants.entities.Entity;
 
 import java.awt.*;
@@ -40,6 +41,8 @@ public class Main {
 		space.openInWindow();
 
 
+		new Balise(ocean, null);
+		
 
 		space.repaint();
 

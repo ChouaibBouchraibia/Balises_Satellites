@@ -8,27 +8,28 @@ import java.util.List;
 import composants.interfaces.EntityInterface;
 import composants.interfaces.MovedListener;
 import composants.interfaces.SyncedListener;
+import nicellipse.component.NiRectangle;
 
 public abstract class Entity implements EntityInterface {
 
-	private Rectangle limits;
+	private NiRectangle parent;
 	private Point location;
 	private List<MovedListener> movedListeners;
 	private List<SyncedListener> syncedListeners;
 	
-	public Entity(Rectangle limits, Point startLocation) {
-		this.limits = limits;
+	public Entity(NiRectangle parent, Point startLocation) {
+		this.parent = parent;
 		this.location = startLocation;
 		this.movedListeners = new ArrayList<MovedListener>();
 		this.syncedListeners = new ArrayList<SyncedListener>();
 	}
 	
-	public Rectangle getLimits() {
-		return this.limits;
+	public NiRectangle getParent() {
+		return this.parent;
 	}
 	
-	public boolean setLimits(Rectangle limits) {
-		this.limits = limits;
+	public boolean setParent(NiRectangle parent) {
+		this.parent = parent;
 		return true;
 	}
 	

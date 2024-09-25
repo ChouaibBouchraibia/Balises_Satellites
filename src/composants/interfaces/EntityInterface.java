@@ -1,24 +1,25 @@
 package composants.interfaces;
 
 import java.awt.Point;
-import java.awt.Rectangle;
+
+import nicellipse.component.NiRectangle;
 
 public interface EntityInterface {
 
 	/**
-	 * Retourne les limites.
+	 * Retourne le parent.
 	 *
 	 * @return
 	 */
-	public Rectangle getLimits();
+	public NiRectangle getParent();
 	
 	/**
-	 * Définis les limites.
+	 * Définis le parent.
 	 *
 	 * @param limits
 	 * @return
 	 */
-	public boolean setLimits(Rectangle limits);
+	public boolean setParent(NiRectangle parent);
 	
 	/**
 	 * Retourne la position de l'entité.
