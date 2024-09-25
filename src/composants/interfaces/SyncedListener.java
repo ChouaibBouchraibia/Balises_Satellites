@@ -7,5 +7,5 @@ public interface SyncedListener {
 	 *
 	 * @param e L'entité qui à été synchronisée.
 	 */
-	public void OnSynced(Entity e);
+	public void OnSynced(EntityInterface e);
 }

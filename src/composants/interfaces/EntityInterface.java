@@ -2,15 +2,7 @@ package composants.interfaces;
 
 import java.awt.Point;
 
-public interface Entity {
-
-	/**
-	 * Retire un écouteur de synchronisation.
-	 *
-	 * @param listener
-	 * @return Vrai si le rappel à été retiré, faux sinon.
-	 */
-	public boolean removeSyncedListener(SyncedListener listener);
+public interface EntityInterface {
 
 	/**
 	 * Retourne la position de l'entité.
@@ -26,6 +18,10 @@ public interface Entity {
 	 * @return
 	 */
 	public boolean setLocation(Point location);
+	
+	public void move();
+	
+	public void sync();
 	
 	/**
 	 * Effectue une petite animation.
@@ -71,4 +67,12 @@ public interface Entity {
 	 * @return Vrai si le listener à été ajouté, faux sinon.
 	 */
 	public boolean addSyncedListener(SyncedListener listener);
+	
+	/**
+	 * Retire un écouteur de synchronisation.
+	 *
+	 * @param listener
+	 * @return Vrai si le rappel à été retiré, faux sinon.
+	 */
+	public boolean removeSyncedListener(SyncedListener listener);
 }

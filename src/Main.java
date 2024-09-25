@@ -3,6 +3,9 @@ import nicellipse.component.NiRectangle;
 import nicellipse.component.NiSpace;
 
 import javax.swing.*;
+
+import composants.entities.Entity;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +43,13 @@ public class Main {
 
 		space.repaint();
 
+		
+		// Exemple.
+		Entity ent = new Entity();
+		ent.setMoveCallback((location) -> {
+			return new Point(0, 0);
+		});
+		ent.move();
 
 	}
 }

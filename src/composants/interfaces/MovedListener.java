@@ -7,5 +7,5 @@ public interface MovedListener {
 	 * 
 	 * @param e L'entité qui à été déplacée.
 	 */
-	public void OnMoved(Entity e);
+	public void OnMoved(EntityInterface e);
 }
