@@ -14,8 +14,7 @@ public class Balise extends ElementMobile implements Observateur {
     private boolean enCollecte;
     private boolean enSynchronisation;
     private Thread threadDeplacement;
-    private NiRectangle espace;
-    private Point positionInitiale;
+
 
 
     public Balise(StrategieDeplacement strategie, int capaciteMemoire) {
@@ -27,20 +26,18 @@ public class Balise extends ElementMobile implements Observateur {
     }
 
     public void demarrerDeplacement(NiRectangle espace) {
-    this.espace = espace;
         threadDeplacement = new Thread(() -> {
             while (enDeplacement) {
                 if (enCollecte) {
                     Point newPos = strategieDeplacement.deplacer(
                             this.getLocation(),
                             espace.getSize() );
-
                     deplacer(newPos.x, newPos.y);
                     collecter();
                 }
-
             }
         });
+        System.out.println("Arret du deplacement");
         threadDeplacement.start();
     }
 
@@ -48,18 +45,18 @@ public class Balise extends ElementMobile implements Observateur {
         if (enCollecte && !memoire.estPleine()) {
             memoire.stocker(new Donnees());
         }
-
         if (memoire.estPleine()) {
             System.out.println("Memoire pleine");
             enCollecte = false;
             enSynchronisation = true;
             remonterEnSurface();
-            arreter();
         }
     }
 
     private void descendre() {
-
+        while (getY()<150) {
+            deplacer(getX(), getY() + 1);
+        }
     }
 
     private void remonterEnSurface() {
@@ -85,10 +82,11 @@ public class Balise extends ElementMobile implements Observateur {
     private void transfererDonnees(Satellite satellite) {
         System.out.println("Transfert de données");
         satellite.recevoirDonnees(memoire.getDonnees());
+        new Thread(() -> {
+                descendre();
+        }).start();
         memoire.vider();
         enSynchronisation = false;
-        reprendre();
-        demarrerDeplacement(espace);
         enCollecte = true;
     }
 }
