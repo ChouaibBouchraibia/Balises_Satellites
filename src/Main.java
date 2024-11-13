@@ -5,9 +5,11 @@ import OceaneSattelite.deplacement.DeplacementHorizontal;
 import OceaneSattelite.deplacement.DeplacementSinusoidal;
 import OceaneSattelite.deplacement.DeplacementVertical;
 
+import java.io.IOException;
+
 // Main.java
 public class Main {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		SimulationOcean simulation = new SimulationOcean();
 
 		// Création des balises avec différentes stratégies

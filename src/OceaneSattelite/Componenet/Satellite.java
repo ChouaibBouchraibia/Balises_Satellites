@@ -7,6 +7,7 @@ import OceaneSattelite.Observateur;
 import nicellipse.component.NiRectangle;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,8 @@ public class Satellite extends ElementMobile implements Observable {
     private boolean disponible;
     private Thread threadDeplacement;
 
-    public Satellite() {
-        super(Color.gray, new Dimension(30, 30));
+    public Satellite() throws IOException {
+        super("satellite.jpg", new Dimension(40, 40));
         this.observateurs = new ArrayList<>();
         this.disponible = true;
     }

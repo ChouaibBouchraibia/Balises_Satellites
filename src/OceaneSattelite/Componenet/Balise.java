@@ -4,6 +4,7 @@ import OceaneSattelite.*;
 import nicellipse.component.NiRectangle;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,8 +18,8 @@ public class Balise extends ElementMobile implements Observateur {
 
 
 
-    public Balise(StrategieDeplacement strategie, int capaciteMemoire) {
-        super(Color.red, new Dimension(20, 20));
+    public Balise(StrategieDeplacement strategie, int capaciteMemoire) throws IOException {
+        super("satellite.jpg", new Dimension(30, 30));
         this.strategieDeplacement = strategie;
         this.memoire = new Memoire(capaciteMemoire);
         this.enCollecte = true;
@@ -35,6 +36,7 @@ public class Balise extends ElementMobile implements Observateur {
                     deplacer(newPos.x, newPos.y);
                     collecter();
                 }
+                System.out.println("arret");
             }
         });
         System.out.println("Arret du deplacement");
