@@ -1,122 +1,158 @@
 package composants.entities;
 
-import java.awt.Component;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
 
-import composants.interfaces.EntityInterface;
-import composants.interfaces.MovedListener;
-import composants.interfaces.SyncedListener;
+import composants.events.MovedEvent;
+import composants.listeners.MovedListener;
+import eventHandler.EventHandler;
 import nicellipse.component.NiRectangle;
 
-public abstract class Entity implements EntityInterface {
-
-	private NiRectangle parent;
-	private Point location;
+public abstract class Entity {
 	
-	protected Component component;
+	private static int SPEED = 50 / 25;
 	
-	private List<MovedListener> movedListeners;
-	private List<SyncedListener> syncedListeners;
+	private NiRectangle component;
+	private Color componentBaseColor;
+	private EventHandler movedEventHandler;
 	
-	public Entity(NiRectangle parent, Point startLocation) {
-		this.parent = parent;
-		this.location = startLocation;
-		this.movedListeners = new ArrayList<MovedListener>();
-		this.syncedListeners = new ArrayList<SyncedListener>();
-
-		this.component = this.createComponent();
-		this.parent.add(this.component);
+	private Directions direction;
+	private boolean readyToSync;
+	
+	public Entity(NiRectangle parent) {
+		this.component = (NiRectangle) parent.add(this.createComponent());
+		this.componentBaseColor = this.component.getBackground();
+		this.movedEventHandler = new EventHandler();
+		
+		this.direction = Directions.LEFT;
+		this.readyToSync = false;
 	}
 	
-	@Override
-	public NiRectangle getParent() {
-		return this.parent;
-	}
+	protected abstract NiRectangle createComponent();
 	
-	@Override
-	public boolean setParent(NiRectangle parent) {
-		this.parent = parent;
-		return true;
-	}
-	
-	@Override
-	public abstract Component createComponent();
-	
-	@Override
 	public Point getLocation() {
-		return this.location;
+		return this.component.getLocation();
 	}
-
-	@Override
-	public boolean setLocation(Point location) {
-		this.location = location;
-		return true;
-	}
-
-	@Override
-	public void move() {
-		this.movedListeners.forEach((e) -> e.OnMoved(this));
-	}
-
-	@Override
-	public void sync() {
-		this.syncedListeners.forEach((e) -> e.OnSynced(this));
-	}
-
-	@Override
-	public void animate() {}
-
-	@Override
-	public boolean addMovedListener(MovedListener listener) {
-		if (listener == null || this.movedListeners.contains(listener)) {
-			return false;
-		}
-		
-		this.movedListeners.add(listener);
-		return true;
-	}
-
-	@Override
-	public boolean removeMovedListener(MovedListener listener) {
-		if (listener == null) {
-			return false;
-		}
-
-		int index = this.movedListeners.indexOf(listener);
-		if (index == -1) {
-			return false;
-		}
-		
-		this.movedListeners.remove(index);
-		return true;
-	}
-
-	@Override
-	public boolean addSyncedListener(SyncedListener listener) {
-		if (listener == null || this.syncedListeners.contains(listener)) {
-			return false;
-		}
-		
-		this.syncedListeners.add(listener);
-		return true;
-	}
-
-	@Override
-	public boolean removeSyncedListener(SyncedListener listener) {
-		if (listener == null) {
-			return false;
-		}
-		
-		int index = this.syncedListeners.indexOf(listener);
-		if (index == -1) {
-			return false;
-		}
-		
-		this.syncedListeners.remove(index);
-		return true;
-	}
-
 	
+	public void setLocation(Point location) {
+		this.component.setLocation(location);
+	}
+	
+	public Dimension getDimension() {
+		return this.component.getSize();
+	}
+	
+	public Dimension getBounds() {
+		return this.component.getParent().getSize();
+	}
+	
+	public void animate() {
+		
+	}
+
+	public boolean move() {
+		boolean boundReached = false;
+		Point loc = this.getLocation();
+		Dimension dim = this.getDimension();
+		Dimension parentDim = this.component.getParent().getSize();
+		
+		int xPos = loc.x;
+		int yPos = loc.y;
+
+		switch (this.direction) {
+			case LEFT:
+				if (xPos + dim.width + SPEED > parentDim.width) {
+					xPos = parentDim.width - dim.width;
+					this.setDirection(Directions.RIGHT);
+					boundReached = true;
+				} else {
+					xPos += SPEED;
+				}
+				break;
+			case RIGHT:
+				if (xPos - SPEED < 0) {
+					xPos = 0;
+					this.setDirection(Directions.LEFT);
+					boundReached = true;
+				} else {
+					xPos -= SPEED;
+				}
+				break;
+			case DOWN:
+				if (yPos + dim.height + SPEED > parentDim.height) {
+					yPos = parentDim.height - dim.height;
+					this.setDirection(Directions.UP);
+					boundReached = true;
+				} else {
+					yPos += SPEED;
+				}
+				break;
+			case UP:
+				if (yPos - SPEED < 0) {
+					yPos = 0;
+					this.setDirection(Directions.DOWN);
+					boundReached = true;
+				} else {
+					yPos -= SPEED;
+				}
+				break;
+			default:
+				break;
+		}
+
+		this.component.setLocation(xPos, yPos);
+		this.movedEventHandler.send(new MovedEvent(this));
+		return boundReached;
+	}
+
+	public void addMovedListener(MovedListener listener) {
+		this.movedEventHandler.registerListener(MovedEvent.class, listener);
+	}
+
+	public void removeMovedListener(MovedListener listener) {
+		this.movedEventHandler.unregisterListener(MovedEvent.class, listener);
+	}
+	
+	public Directions getDirection() {
+		return this.direction;
+	}
+	
+	public void setDirection(Directions direction) {
+		this.direction = direction;
+	}
+	
+	public boolean isReadyToSync() {
+		return this.readyToSync;
+	}
+	
+	private Color tmp;
+	public void setReadyToSync(boolean isReady) {
+		if (isReady) {
+			tmp = this.component.getBackground();
+			this.component.setBackground(tmp.darker());
+		} else {
+			this.component.setBackground(this.componentBaseColor);
+		}
+		this.readyToSync = isReady;
+	}
+	
+	public boolean canSyncWith(Entity entity) {
+		return entity.isReadyToSync();
+	}
+	
+	public boolean trySync(Entity entity) {
+		if (this.isReadyToSync() && this.canSyncWith(entity)) {
+			this.setReadyToSync(false);
+			entity.setReadyToSync(false);
+			this.animate();
+			entity.animate();
+			return true;
+		}
+		return false;
+	}
+	
+	public enum Directions {
+		UP, DOWN, LEFT, RIGHT
+	}
 }

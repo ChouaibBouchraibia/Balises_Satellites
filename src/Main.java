@@ -1,30 +1,23 @@
-import nicellipse.component.NiLabel;
 import nicellipse.component.NiRectangle;
 import nicellipse.component.NiSpace;
 
-import javax.swing.*;
-
 import composants.entities.Balise;
-import composants.entities.Entity;
+import composants.entities.Satellite;
+import composants.listeners.MovedListener;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main {
 	
-	private static List<Balise> balises;
-	
-	private static NiRectangle sky;
-	private static NiRectangle ocean;
+	private static List<Satellite> satellites = new ArrayList<Satellite>();
+	private static List<Balise> balises = new ArrayList<Balise>();
 	
 	public static void main(String[] args) {
-		balises = new ArrayList<Balise>();
 
 		NiSpace space = new NiSpace("Space", new Dimension(1000, 700));
 
@@ -34,21 +27,47 @@ public class Main {
 		container.setLocation(50, 50);
 
 		// Ciel.
-		sky = new NiRectangle();
+		NiRectangle sky = new NiRectangle();
 		sky.setBackground(Color.white);
 		sky.setLocation(new Point(0, 0));
 		sky.setSize(new Dimension(900, 300));
 		container.add(sky);
 
+		// ... Add satellites.
+		Dimension skySize = sky.getSize();
+		for (int i = 0; i < 10; i++) {
+			Satellite satellite = new Satellite(sky);
+			Dimension dim = satellite.getDimension();
+		    
+			satellite.setLocation(new Point(
+	    		(int) (Math.random() * (skySize.width - dim.width)),
+	    		(int) (Math.random() * (skySize.height / 1.5 - dim.height))
+	    	));
+			satellites.add(satellite);
+		}
+
 		// Mer.
-		ocean = new NiRectangle();
+		NiRectangle ocean = new NiRectangle();
 		ocean.setBackground(Color.blue);
 		ocean.setLocation(new Point(0, 300));
 		ocean.setSize(new Dimension(900, 300));
 		container.add(ocean);
 
-		// Balises.
-		addBalises();
+		// ... Add balises.
+		Dimension oceanSize = ocean.getSize();
+		for (int i = 0; i < 10; i++) {
+			Balise balise = new Balise(ocean);
+			Dimension dim = balise.getDimension();
+			
+			balise.setLocation(new Point(
+	    		(int) (Math.random() * (oceanSize.width - dim.width)),
+	    		(int) (Math.random() * (oceanSize.height - dim.height))
+	    	));
+		    satellites.forEach((satellite) -> {
+		    	satellite.addMovedListener(new MovedListener(balise));
+		    });
+			balises.add(balise);
+		}
 
 		space.add(container);
 		space.openInWindow();
@@ -58,16 +77,17 @@ public class Main {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
+				Main.satellites.forEach((satellites) -> satellites.move());
 				Main.balises.forEach((balise) -> balise.move());
-				System.out.println("test");
 			}
-		}, 0l, 250l);
-	}
-	
-	private static void addBalises() {
-		for (int i = 0; i < 5; i++) {
-			Balise b = new Balise(ocean, new Point(10, 10));
-			balises.add(b);
+		}, 0l, 25l);
+		
+		
+		
+		
+		Scanner in = new Scanner(System.in);
+		while (true) {
+			System.out.println(in.nextLine());
 		}
 	}
 }
