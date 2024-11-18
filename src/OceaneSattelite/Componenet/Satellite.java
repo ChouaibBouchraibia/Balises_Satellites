@@ -59,7 +59,6 @@ public class Satellite extends ElementMobile implements Observable {
 
     public void recevoirDonnees(List<Donnees> donnees) {
         disponible = false;
-        // Simulation du temps de transfert
         new Thread(() -> {
             try {
                 Thread.sleep(2000);

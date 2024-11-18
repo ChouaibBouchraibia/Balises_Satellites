@@ -15,8 +15,8 @@ public class Balise extends ElementMobile implements Observateur {
     private boolean enCollecte;
     private boolean enSynchronisation;
     private Thread threadDeplacement;
-
-
+    private boolean enRemontee;
+    private boolean enDescente;
 
     public Balise(StrategieDeplacement strategie, int capaciteMemoire) throws IOException {
         super("imagebalise.png", new Dimension(50, 50));
@@ -24,22 +24,27 @@ public class Balise extends ElementMobile implements Observateur {
         this.memoire = new Memoire(capaciteMemoire);
         this.enCollecte = true;
         this.enSynchronisation = false;
+        this.enRemontee = false;
+        this.enDescente = false;
     }
 
     public void demarrerDeplacement(NiRectangle espace) {
         threadDeplacement = new Thread(() -> {
             while (enDeplacement) {
-                if (enCollecte) {
+                if (enCollecte && !enRemontee && !enDescente) {
                     Point newPos = strategieDeplacement.deplacer(
                             this.getLocation(),
-                            espace.getSize() );
+                            espace.getSize());
                     deplacer(newPos.x, newPos.y);
                     collecter();
                 }
-                System.out.println("arret");
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         });
-        System.out.println("Arret du deplacement");
         threadDeplacement.start();
     }
 
@@ -56,15 +61,45 @@ public class Balise extends ElementMobile implements Observateur {
     }
 
     private void descendre() {
-        while (getY()<150) {
-            deplacer(getX(), getY() + 1);
-        }
+        enDescente = true;
+        enCollecte = false;
+        enSynchronisation = false;
+        enRemontee = false;
+
+        Thread threadDescente = new Thread(() -> {
+            while (getY() < 150 && enDescente) {
+                deplacer(getX(), getY() + 1);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+            enDescente = false;
+            enCollecte = true;
+        });
+        threadDescente.start();
     }
 
     private void remonterEnSurface() {
-        while (getY()>0) {
-            deplacer(getX(), getY() - 1);
-        }
+        enRemontee = true;
+        enCollecte = false;
+        enDescente = false;
+
+        Thread threadRemontee = new Thread(() -> {
+            while (getY() > 0 && enRemontee) {
+                deplacer(getX(), getY() - 1);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+            enRemontee = false;
+        });
+        threadRemontee.start();
     }
 
     @Override
@@ -84,11 +119,11 @@ public class Balise extends ElementMobile implements Observateur {
     private void transfererDonnees(Satellite satellite) {
         System.out.println("Transfert de données");
         satellite.recevoirDonnees(memoire.getDonnees());
-        new Thread(() -> {
-                descendre();
-        }).start();
+
+
+
         memoire.vider();
         enSynchronisation = false;
-        enCollecte = true;
+        descendre();
     }
 }
