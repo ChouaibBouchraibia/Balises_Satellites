@@ -19,7 +19,7 @@ public class Balise extends ElementMobile implements Observateur {
 
 
     public Balise(StrategieDeplacement strategie, int capaciteMemoire) throws IOException {
-        super("satellite.jpg", new Dimension(30, 30));
+        super("imagebalise.png", new Dimension(50, 50));
         this.strategieDeplacement = strategie;
         this.memoire = new Memoire(capaciteMemoire);
         this.enCollecte = true;

@@ -17,7 +17,7 @@ public class Satellite extends ElementMobile implements Observable {
     private Thread threadDeplacement;
 
     public Satellite() throws IOException {
-        super("satellite.jpg", new Dimension(40, 40));
+        super("imagesatellite.png", new Dimension(40, 40));
         this.observateurs = new ArrayList<>();
         this.disponible = true;
     }
