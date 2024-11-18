@@ -1,7 +1,9 @@
 package OceaneSattelite.Commands.Commands;
 
+import java.awt.Dimension;
 import java.util.Map;
 
+import OceaneSattelite.ElementMobile;
 import OceaneSattelite.SimulationOcean;
 import OceaneSattelite.Commands.CommandInterface;
 import OceaneSattelite.Componenet.Balise;
@@ -32,6 +34,26 @@ public class AddCommand implements CommandInterface {
 		}
 		
 		String type = args[0].toLowerCase();
+		ElementMobile elem = null;
+		if (type.equals("balise")) {
+			Balise balise = new Balise(new DeplacementVertical(), 300);
+			elem = balise;
+			
+			simulation.ajouterBalise(balise);
+			simulation.lesSatellites().forEach(s -> s.ajouterObservateur(balise));
+			balise.demarrerDeplacement(simulation.getOcean());
+		} else if (type.equals("satellite")) {
+			Satellite satellite = new Satellite();
+			elem = satellite;
+			
+			simulation.ajouterSatellite(satellite);
+			satellite.demarrerDeplacement(simulation.getSky());
+		}
+		
+		if (elem == null) {			
+			return "Invalide type '" + args[0] + "'";
+		}
+		
 		int posX = 0;
 		int posY = 0;
 
@@ -42,23 +64,26 @@ public class AddCommand implements CommandInterface {
 			posY = Integer.parseInt(args[2]);
 		}
 		
-		
-		if (type.equals("balise")) {
-			Balise balise = new Balise(new DeplacementVertical(), 300);
-			simulation.ajouterBalise(balise);
-			simulation.lesSatellites().forEach(s -> s.ajouterObservateur(balise));
-			balise.setLocation(posX, posY);
-			balise.demarrerDeplacement(simulation.getOcean());
-			return "Balise added";
-		} else if (type.equals("satellite")) {
-			Satellite satellite = new Satellite();
-			simulation.ajouterSatellite(satellite);
-			satellite.setLocation(posX, posY);
-			satellite.demarrerDeplacement(simulation.getSky());
-			return "Satellite added";
+		if (posX != 0 || posY != 0) {
+			Dimension size = elem.getSize();
+			Dimension bound = elem.getParent().getSize();
+			
+			if (posX < 0) {
+				posX = 0;
+			} else if (posX + size.width > bound.width) {
+				posX = bound.width - size.width;
+			}
+			
+			if (posY < 0) {
+				posY = 0;
+			} else if (posY + size.height > bound.height) {
+				posY = bound.height - size.height;
+			}
+			
+			elem.setLocation(posX, posY);
 		}
-
-		return "Invalide type '" + args[0] + "'";
+		
+		return "Added";
 	}
 
 }
