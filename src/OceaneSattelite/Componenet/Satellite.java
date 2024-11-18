@@ -9,11 +9,15 @@ import nicellipse.component.NiRectangle;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Satellite extends ElementMobile implements Observable {
-    private List<Observateur> observateurs;
+    
+	private static final long serialVersionUID = 2561586763749861833L;
+	
+	private List<Observateur> observateurs;
     private boolean disponible;
-    private Thread threadDeplacement;
 
     public Satellite() {
         super(Color.gray, new Dimension(30, 30));
@@ -21,18 +25,23 @@ public class Satellite extends ElementMobile implements Observable {
         this.disponible = true;
     }
 
+    @Override
     public void demarrerDeplacement(NiRectangle espace) {
-        threadDeplacement = new Thread(() -> {
-            while (enDeplacement) {
-                if (getX() < espace.getWidth() - getWidth()) {
+    	new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (!enDeplacement) {
+					return;
+				}
+
+				if (getX() < espace.getWidth() - getWidth()) {
                     deplacer(getX() + 1, getY());
                 } else {
                     deplacer(0, getY());
                 }
                 notifierObservateurs();
-            }
-        });
-        threadDeplacement.start();
+			}
+		}, 0l, 20l);
     }
 
     @Override

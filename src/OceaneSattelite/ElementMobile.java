@@ -16,23 +16,10 @@ public abstract class ElementMobile extends NiRectangle {
         this.enDeplacement = true;
     }
 
+    public abstract void demarrerDeplacement(NiRectangle espace);
+    
     protected void deplacer(int x, int y) {
-        final Runnable deplacement = new Runnable() {
-            public void run() {
-                setLocation(new Point(x, y));
-                try {
-                    Thread.sleep(2);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        try {
-            SwingUtilities.invokeAndWait(deplacement);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    	setLocation(new Point(x, y));
     }
 
     public void arreter() {

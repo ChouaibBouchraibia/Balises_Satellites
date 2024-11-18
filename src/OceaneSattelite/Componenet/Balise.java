@@ -4,18 +4,17 @@ import OceaneSattelite.*;
 import nicellipse.component.NiRectangle;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Balise extends ElementMobile implements Observateur {
-    private StrategieDeplacement strategieDeplacement;
+    
+	private static final long serialVersionUID = -3349914014710954200L;
+	
+	private StrategieDeplacement strategieDeplacement;
     private Memoire memoire;
     private boolean enCollecte;
     private boolean enSynchronisation;
-    private Thread threadDeplacement;
-
-
 
     public Balise(StrategieDeplacement strategie, int capaciteMemoire) {
         super(Color.red, new Dimension(20, 20));
@@ -25,20 +24,21 @@ public class Balise extends ElementMobile implements Observateur {
         this.enSynchronisation = false;
     }
 
+    @Override
     public void demarrerDeplacement(NiRectangle espace) {
-        threadDeplacement = new Thread(() -> {
-            while (enDeplacement) {
-                if (enCollecte) {
+    	new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (enCollecte) {
                     Point newPos = strategieDeplacement.deplacer(
-                            this.getLocation(),
-                            espace.getSize() );
+                        getLocation(),
+                        espace.getSize()
+                    );
                     deplacer(newPos.x, newPos.y);
                     collecter();
                 }
-            }
-        });
-        System.out.println("Arret du deplacement");
-        threadDeplacement.start();
+			}
+		}, 0l, 20l);
     }
 
     private void collecter() {
@@ -46,7 +46,6 @@ public class Balise extends ElementMobile implements Observateur {
             memoire.stocker(new Donnees());
         }
         if (memoire.estPleine()) {
-            System.out.println("Memoire pleine");
             enCollecte = false;
             enSynchronisation = true;
             remonterEnSurface();
@@ -80,7 +79,6 @@ public class Balise extends ElementMobile implements Observateur {
     }
 
     private void transfererDonnees(Satellite satellite) {
-        System.out.println("Transfert de données");
         satellite.recevoirDonnees(memoire.getDonnees());
         new Thread(() -> {
                 descendre();

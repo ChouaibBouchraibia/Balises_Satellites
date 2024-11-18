@@ -46,15 +46,59 @@ public class SimulationOcean {
         space.add(container);
         space.openInWindow();
     }
-
+    
+    public List<Balise> lesBalises() {
+    	return balises;
+    }
+    
     public void ajouterBalise(Balise balise) {
         balises.add(balise);
         ocean.add(balise);
     }
-
+    
+    public boolean retirerBalise(Balise balise) {
+    	if (balises.remove(balise)) {
+        	satellites.forEach(s -> s.supprimerObservateur(balise));
+    		ocean.remove(balise);
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public Balise retirerBalise(int index) {
+    	if (index < 0 || index >= balises.size()) {
+    		return null;
+    	}
+    	Balise balise = balises.remove(index);
+    	satellites.forEach(s -> s.supprimerObservateur(balise));
+    	ocean.remove(balise);
+    	return balise;
+    }
+    
+    public List<Satellite> lesSatellites() {
+    	return satellites;
+    }
+    
     public void ajouterSatellite(Satellite satellite) {
         satellites.add(satellite);
         sky.add(satellite);
+    }
+    
+    public boolean retirerSatellite(Satellite satellite) {
+    	if (satellites.remove(satellite)) {
+    		sky.remove(satellite);
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public Satellite retirerSatellite(int index) {
+    	if (index < 0 || index >= satellites.size()) {
+    		return null;
+    	}
+    	Satellite satellite = satellites.remove(index);
+    	sky.remove(satellite);
+    	return satellite;
     }
 
     public NiRectangle getOcean() {
