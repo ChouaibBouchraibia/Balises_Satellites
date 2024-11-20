@@ -38,6 +38,7 @@ public class Satellite extends ElementMobile implements Observable {
 				if (getX() < espace.getWidth() - getWidth()) {
                     deplacer(getX() + 1, getY());
                 } else {
+                    disponible = true;
                     deplacer(0, getY());
                 }
                 notifierObservateurs();
@@ -68,13 +69,6 @@ public class Satellite extends ElementMobile implements Observable {
 
     public void recevoirDonnees(List<Donnees> donnees) {
         disponible = false;
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000);
-                disponible = true;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+
     }
 }

@@ -20,6 +20,7 @@ public class Balise extends ElementMobile implements Observateur {
         REMONTEE
     }
 
+    private float originY;
     private StrategieDeplacement strategieDeplacement;
     private Memoire memoire;
     private EtatBalise etatCourant;
@@ -63,7 +64,7 @@ public class Balise extends ElementMobile implements Observateur {
                         break;
                     case DESCENTE:
                         newPos = new Point(getX(), getY() + vitesseDeplacement);
-                        if (newPos.y >= 150) {
+                        if (newPos.y >= originY) {
                             etatCourant = EtatBalise.COLLECTE;
                         }
                         break;
@@ -82,7 +83,6 @@ public class Balise extends ElementMobile implements Observateur {
             memoire.stocker(new Donnees());
         }
         if (memoire.estPleine()) {
-            System.out.println("Memoire pleine");
 
             remonterEnSurface();
         }
@@ -95,6 +95,7 @@ public class Balise extends ElementMobile implements Observateur {
     }
 
     private void remonterEnSurface() {
+        this.originY = getY();
         etatCourant = EtatBalise.REMONTEE;
 
 
@@ -102,8 +103,9 @@ public class Balise extends ElementMobile implements Observateur {
 
     @Override
     public void miseAJour(Observable observable) {
-        if (observable instanceof Satellite && etatCourant == EtatBalise.SYNCHRONISATION) {
+        if (observable instanceof Satellite && etatCourant == EtatBalise.ATTENTE) {
             Satellite satellite = (Satellite) observable;
+
             if (satellite.estDisponible() && estAPortee(satellite)) {
                 etatCourant = EtatBalise.SYNCHRONISATION;
                 transfererDonnees(satellite);
@@ -112,11 +114,13 @@ public class Balise extends ElementMobile implements Observateur {
     }
 
     private boolean estAPortee(Satellite satellite) {
-        return Math.abs(satellite.getX() - this.getX()) < 50 && this.getY() <= 1;
+        // Pour améliorer: Faire en fonction du centre des deux avec par exemple une marge de 10 pixels ou 25% de la taille de chaque.
+        int xPos1 = getX();
+        int xPos2 = satellite.getX();
+        return xPos1 >= xPos2 && xPos1 <= xPos2 + satellite.getWidth() && getY() <= 1;
     }
 
     private void transfererDonnees(Satellite satellite) {
-        System.out.println("Transfert de données");
         satellite.recevoirDonnees(memoire.getDonnees());
         memoire.vider();
 
