@@ -84,9 +84,25 @@ public class Balise extends ElementMobile implements Observateur {
     private void transfererDonnees(Satellite satellite) {
         System.out.println("Transfert de données");
         satellite.recevoirDonnees(memoire.getDonnees());
+
+        // Activer la synchronisation et afficher le cercle
+        this.setSynchronisation(true);  // Montrer le cercle autour de la balise
+        satellite.setSynchronisation(true);  // Montrer le cercle autour du satellite
+
         new Thread(() -> {
-                descendre();
+            descendre();
         }).start();
+
+        // Simuler le délai de la synchronisation (par exemple 2 secondes)
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // Désactiver la synchronisation après 2 secondes
+                setSynchronisation(false);
+                satellite.setSynchronisation(false);
+            }
+        }, 500);  // 2000ms = 2 secondes
+
         memoire.vider();
         enSynchronisation = false;
         enCollecte = true;
