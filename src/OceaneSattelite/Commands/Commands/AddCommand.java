@@ -1,6 +1,7 @@
 package OceaneSattelite.Commands.Commands;
 
 import java.awt.Dimension;
+import java.io.IOException;
 import java.util.Map;
 
 import OceaneSattelite.ElementMobile;
@@ -28,7 +29,7 @@ public class AddCommand implements CommandInterface {
 	}
 
 	@Override
-	public String execute(SimulationOcean simulation, String[] args) {
+	public String execute(SimulationOcean simulation, String[] args) throws IOException {
 		if (args == null || args.length < 1) {
 			return "Missing arguments";
 		}

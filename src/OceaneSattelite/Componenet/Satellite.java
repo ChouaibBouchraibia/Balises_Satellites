@@ -26,7 +26,7 @@ public class Satellite extends ElementMobile implements Observable {
         this.disponible = true;
     }
 
-    @Override
+
     public void demarrerDeplacement(NiRectangle espace) {
     	new Timer().schedule(new TimerTask() {
 			@Override

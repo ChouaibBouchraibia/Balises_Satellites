@@ -4,6 +4,7 @@ import OceaneSattelite.*;
 import nicellipse.component.NiRectangle;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,7 +26,7 @@ public class Balise extends ElementMobile implements Observateur {
         this.enSynchronisation = false;
     }
 
-    @Override
+
     public void demarrerDeplacement(NiRectangle espace) {
     	new Timer().schedule(new TimerTask() {
 			@Override

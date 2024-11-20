@@ -1,5 +1,6 @@
 package OceaneSattelite.Commands;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -56,9 +57,14 @@ public class CommandInterpreter {
 	            	System.out.println("Unknown command '" + commandName + "'");
 	            	continue;
 	            }
-	            
-	            String out = command.execute(simulation, parts.subList(1, parts.size()).toArray(String[]::new));
-	            if (out != null) {
+
+                String out = null;
+                try {
+                    out = command.execute(simulation, parts.subList(1, parts.size()).toArray(String[]::new));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                if (out != null) {
 	            	System.out.println(out);
 	            }
 	        }
