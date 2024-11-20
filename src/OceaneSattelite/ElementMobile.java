@@ -40,7 +40,8 @@ public abstract class ElementMobile extends NiRectangle {
         }
         if (enSynchronisation) {
             g.setColor(Color.BLACK);  // Définir la couleur du cercle
-            g.drawOval(0, 0, getWidth(), getHeight());  // Dessiner le cercle autour de l'élément
+            g.drawOval(0, 0, getWidth(), getHeight());// Dessiner le cercle autour de l'élément
+            g.drawOval(0, 0, getWidth()+2, getHeight()+2);// Dessiner le cercle autour de l'élément
         }
     }
 
@@ -68,11 +69,5 @@ public abstract class ElementMobile extends NiRectangle {
         }
     }
 
-    public void arreter() {
-        this.enDeplacement = false;
-    }
 
-    public void reprendre() {
-        this.enDeplacement = true;
-    }
 }

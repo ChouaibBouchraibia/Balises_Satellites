@@ -72,16 +72,6 @@ public class Satellite extends ElementMobile implements Observable {
         // Activer la synchronisation et afficher le cercle
         this.setSynchronisation(true);  // Montrer le cercle autour du satellite
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(500);
-                disponible = true;
 
-                // Désactiver la synchronisation après 2 secondes
-                setSynchronisation(false);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
 }

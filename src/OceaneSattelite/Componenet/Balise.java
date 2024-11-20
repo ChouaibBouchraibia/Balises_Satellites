@@ -129,9 +129,6 @@ public class Balise extends ElementMobile implements Observateur {
         this.setSynchronisation(true);  // Montrer le cercle autour de la balise
         satellite.setSynchronisation(true);  // Montrer le cercle autour du satellite
 
-        new Thread(() -> {
-            descendre();
-        }).start();
 
         // Simuler le délai de la synchronisation (par exemple 2 secondes)
         new Timer().schedule(new TimerTask() {
