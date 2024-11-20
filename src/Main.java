@@ -1,15 +1,15 @@
 import OceaneSattelite.Componenet.Balise;
 import OceaneSattelite.Componenet.Satellite;
 import OceaneSattelite.SimulationOcean;
+import OceaneSattelite.Commands.CommandInterpreter;
 import OceaneSattelite.deplacement.DeplacementHorizontal;
 import OceaneSattelite.deplacement.DeplacementSinusoidal;
 import OceaneSattelite.deplacement.DeplacementVertical;
 
-import java.io.IOException;
-
 // Main.java
 public class Main {
-	public static void main(String[] args) throws IOException {
+	
+	public static void main(String[] args) {
 		SimulationOcean simulation = new SimulationOcean();
 
 		// Création des balises avec différentes stratégies
@@ -49,5 +49,7 @@ public class Main {
 		baliseSinusoidale.demarrerDeplacement(simulation.getOcean());
 		satellite1.demarrerDeplacement(simulation.getSky());
 		satellite2.demarrerDeplacement(simulation.getSky());
+		
+		CommandInterpreter.start(simulation);
 	}
 }

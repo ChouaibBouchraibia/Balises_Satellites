@@ -4,19 +4,18 @@ import OceaneSattelite.*;
 import nicellipse.component.NiRectangle;
 
 import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Balise extends ElementMobile implements Observateur {
-    private StrategieDeplacement strategieDeplacement;
+
+	private static final long serialVersionUID = -3349914014710954200L;
+
+	private StrategieDeplacement strategieDeplacement;
     private Memoire memoire;
     private boolean enCollecte;
     private boolean enSynchronisation;
-    private Thread threadDeplacement;
-    private boolean enRemontee;
-    private boolean enDescente;
+
 
     public Balise(StrategieDeplacement strategie, int capaciteMemoire) throws IOException {
         super("imagebalise.png", new Dimension(50, 50));
@@ -24,28 +23,23 @@ public class Balise extends ElementMobile implements Observateur {
         this.memoire = new Memoire(capaciteMemoire);
         this.enCollecte = true;
         this.enSynchronisation = false;
-        this.enRemontee = false;
-        this.enDescente = false;
     }
 
+    @Override
     public void demarrerDeplacement(NiRectangle espace) {
-        threadDeplacement = new Thread(() -> {
-            while (enDeplacement) {
-                if (enCollecte && !enRemontee && !enDescente) {
+    	new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (enCollecte) {
                     Point newPos = strategieDeplacement.deplacer(
-                            this.getLocation(),
-                            espace.getSize());
+                        getLocation(),
+                        espace.getSize()
+                    );
                     deplacer(newPos.x, newPos.y);
                     collecter();
                 }
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        });
-        threadDeplacement.start();
+			}
+		}, 0l, 20l);
     }
 
     private void collecter() {
@@ -61,45 +55,15 @@ public class Balise extends ElementMobile implements Observateur {
     }
 
     private void descendre() {
-        enDescente = true;
-        enCollecte = false;
-        enSynchronisation = false;
-        enRemontee = false;
-
-        Thread threadDescente = new Thread(() -> {
-            while (getY() < 150 && enDescente) {
-                deplacer(getX(), getY() + 1);
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-            enDescente = false;
-            enCollecte = true;
-        });
-        threadDescente.start();
+        while (getY()<150) {
+            deplacer(getX(), getY() + 1);
+        }
     }
 
     private void remonterEnSurface() {
-        enRemontee = true;
-        enCollecte = false;
-        enDescente = false;
-
-        Thread threadRemontee = new Thread(() -> {
-            while (getY() > 0 && enRemontee) {
-                deplacer(getX(), getY() - 1);
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-            enRemontee = false;
-        });
-        threadRemontee.start();
+        while (getY()>0) {
+            deplacer(getX(), getY() - 1);
+        }
     }
 
     @Override
@@ -119,11 +83,11 @@ public class Balise extends ElementMobile implements Observateur {
     private void transfererDonnees(Satellite satellite) {
         System.out.println("Transfert de données");
         satellite.recevoirDonnees(memoire.getDonnees());
-
-
-
+        new Thread(() -> {
+                descendre();
+        }).start();
         memoire.vider();
         enSynchronisation = false;
-        descendre();
+        enCollecte = true;
     }
 }
