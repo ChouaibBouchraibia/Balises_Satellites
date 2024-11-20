@@ -1,73 +1,57 @@
-import nicellipse.component.NiLabel;
-import nicellipse.component.NiRectangle;
-import nicellipse.component.NiSpace;
+import OceaneSattelite.Componenet.Balise;
+import OceaneSattelite.Componenet.Satellite;
+import OceaneSattelite.SimulationOcean;
+import OceaneSattelite.Commands.CommandInterpreter;
+import OceaneSattelite.deplacement.DeplacementHorizontal;
+import OceaneSattelite.deplacement.DeplacementSinusoidal;
+import OceaneSattelite.deplacement.DeplacementVertical;
 
-import javax.swing.*;
+import java.io.IOException;
 
-import composants.entities.Balise;
-import composants.entities.Entity;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
+// Main.java
 public class Main {
 	
-	private static List<Balise> balises;
-	
-	private static NiRectangle sky;
-	private static NiRectangle ocean;
-	
-	public static void main(String[] args) {
-		balises = new ArrayList<Balise>();
+	public static void main(String[] args) throws IOException {
+		SimulationOcean simulation = new SimulationOcean();
 
-		NiSpace space = new NiSpace("Space", new Dimension(1000, 700));
+		// Création des balises avec différentes stratégies
+		Balise baliseHorizontale = new Balise(new DeplacementHorizontal(),600);
+		baliseHorizontale.setLocation(0, 200);
 
-		NiRectangle container = new NiRectangle();
-		container.setBackground(Color.white);
-		container.setSize(new Dimension(900, 600));
-		container.setLocation(50, 50);
+		Balise baliseVerticale = new Balise(new DeplacementVertical(),300);
+		baliseVerticale.setLocation(200, 300);
 
-		// Ciel.
-		sky = new NiRectangle();
-		sky.setBackground(Color.white);
-		sky.setLocation(new Point(0, 0));
-		sky.setSize(new Dimension(900, 300));
-		container.add(sky);
+		Balise baliseSinusoidale = new Balise(new DeplacementSinusoidal(),500);
+		baliseSinusoidale.setLocation(200, 350);
 
-		// Mer.
-		ocean = new NiRectangle();
-		ocean.setBackground(Color.blue);
-		ocean.setLocation(new Point(0, 300));
-		ocean.setSize(new Dimension(900, 300));
-		container.add(ocean);
+		// Création des satellites
+		Satellite satellite1 = new Satellite();
+		satellite1.setLocation(0, 100);
+		Satellite satellite2 = new Satellite();
+		satellite2.setLocation(300, 200);
 
-		// Balises.
-		addBalises();
+		// Ajout des éléments à la simulation
+		simulation.ajouterBalise(baliseHorizontale);
+		simulation.ajouterBalise(baliseVerticale);
+		simulation.ajouterBalise(baliseSinusoidale);
+		simulation.ajouterSatellite(satellite1);
+		simulation.ajouterSatellite(satellite2);
 
-		space.add(container);
-		space.openInWindow();
-		space.repaint();
+		// Enregistrement des observateurs
+		satellite1.ajouterObservateur(baliseHorizontale);
+		satellite1.ajouterObservateur(baliseVerticale);
+		satellite1.ajouterObservateur(baliseSinusoidale);
+		satellite2.ajouterObservateur(baliseHorizontale);
+		satellite2.ajouterObservateur(baliseVerticale);
+		satellite2.ajouterObservateur(baliseSinusoidale);
+
+		// Démarrage des mouvements
+		baliseHorizontale.demarrerDeplacement(simulation.getOcean());
+		baliseVerticale.demarrerDeplacement(simulation.getOcean());
+		baliseSinusoidale.demarrerDeplacement(simulation.getOcean());
+		satellite1.demarrerDeplacement(simulation.getSky());
+		satellite2.demarrerDeplacement(simulation.getSky());
 		
-		// Boucle infinie.
-		new Timer().schedule(new TimerTask() {
-			@Override
-			public void run() {
-				Main.balises.forEach((balise) -> balise.move());
-				System.out.println("test");
-			}
-		}, 0l, 250l);
-	}
-	
-	private static void addBalises() {
-		for (int i = 0; i < 5; i++) {
-			Balise b = new Balise(ocean, new Point(10, 10));
-			balises.add(b);
-		}
+		CommandInterpreter.start(simulation);
 	}
 }

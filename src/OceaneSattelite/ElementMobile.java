@@ -1,0 +1,73 @@
+package OceaneSattelite;
+
+import nicellipse.component.NiRectangle;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+public abstract class ElementMobile extends NiRectangle {
+    protected int vitesse;
+    protected boolean enDeplacement;
+    private Image image; // Image de l'élément mobile
+    protected boolean enSynchronisation;
+
+
+    public ElementMobile(String cheminImage, Dimension taille) {
+        this.setSize(taille);         // Définit la taille du composant
+        this.setBorder(null);
+        this.vitesse = 1;
+        this.enDeplacement = true;
+        this.enSynchronisation = false;
+
+        // Charge l'image depuis le fichier
+        try {
+            this.image = ImageIO.read(new File(cheminImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Erreur : Impossible de charger l'image.");
+        }
+        this.setOpaque(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (image != null) {
+            // Dessine l'image pour remplir le composant
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+        }
+        if (enSynchronisation) {
+            g.setColor(Color.BLACK);  // Définir la couleur du cercle
+            g.drawOval(0, 0, getWidth(), getHeight());// Dessiner le cercle autour de l'élément
+            g.drawOval(0, 0, getWidth()+2, getHeight()+2);// Dessiner le cercle autour de l'élément
+        }
+    }
+
+    public void setSynchronisation(boolean synchronisation) {
+        this.enSynchronisation = synchronisation;  // Changer l'état de synchronisation
+        repaint();  // Redessiner l'élément pour afficher le cercle
+    }
+
+    protected void deplacer(int x, int y) {
+        final Runnable deplacement = new Runnable() {
+            public void run() {
+                setLocation(new Point(x, y)); // Déplace l'image aux nouvelles coordonnées
+                try {
+                    Thread.sleep(2); // Pause pour lisser le déplacement
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        try {
+            SwingUtilities.invokeAndWait(deplacement);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+}
